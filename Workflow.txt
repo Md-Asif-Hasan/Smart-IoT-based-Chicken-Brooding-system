@@ -1,0 +1,86 @@
+# Chicken Brooder — Basic Workflow
+
+This workflow describes the steps to build, test, and deploy the Microcontroller & IoT-based Chicken Brooder. Use this as a checklist while assembling hardware, writing/flashing firmware, and enabling the cloud dashboard.
+
+---
+
+## 1. Gather components
+- ESP8266 NodeMCU (or similar Wi-Fi microcontroller)
+- DHT11 (or DHT22 for improved accuracy)
+- 2–3 channel 5V relay module (fan, pump, light/heater)
+- DC fan
+- DC water pump
+- Servo motor (feeder)
+- 5V power supply capable of driving pump, servo and relays
+- Wires, connectors, breadboard / perfboard
+- Optional: enclosure, fuses, snubbers for inductive loads
+
+---
+
+## 2. Pin mapping (example used in the sketch)
+- DHT data → D5
+- relay_fan → D4
+- LED_relay_PIN (heater/lighting) → D2
+- relay_pump → D3
+- servo_PIN → D6
+- Common GND required between microcontroller and actuators
+
+> **Note:** Verify the board pin numbering for your specific NodeMCU/ESP board before wiring.
+
+---
+
+## 3. Wiring & safety notes
+- Connect relay VCC to 5V, relay GND to common GND, relay IN pins to mapped GPIOs.
+- Use an appropriately rated external 5V supply for pump and servo. Do not power high-current loads from the microcontroller's regulator.
+- Use opto-isolated relays or transistor drivers if needed. For inductive loads, consider flyback diodes or snubber circuits.
+- If using mains AC loads (heater lamp), follow mains safety rules and use appropriately rated relays/SSR and insulation.
+
+---
+
+## 4. Prepare firmware
+- Clean the sketch of any non-ASCII characters (e.g., replace ligatures like `ﬂ` with `fl`).
+- Confirm `thingProperties.h` (or equivalent) defines the cloud variables used in the sketch: `temperature`, `humidity`, `fan`, `pump`, `led`.
+- Set Wi-Fi and Arduino Cloud credentials as required by your IoT setup.
+- Double-check function brackets and servo angle ranges. Avoid sending angles outside a servo's safe range (commonly 0–180).
+
+---
+
+## 5. Flash firmware
+1. Open the `.ino` sketch in Arduino IDE or PlatformIO.
+2. Select the correct board (e.g., NodeMCU 1.0 (ESP-12E Module)) and COM port.
+3. Compile and upload.
+
+---
+
+## 6. Bench testing
+- Open Serial Monitor (9600 baud) and confirm sensor readings.
+- Manually toggle each relay and observe connected actuator behavior.
+- Run the feeder routine and observe servo motion; ensure no mechanical binding.
+- Confirm pump and fan draw are within your power supply capabilities.
+
+---
+
+## 7. Cloud integration & dashboard
+- Create an IoT Thing (if using Arduino IoT Cloud) and define variables to match the sketch.
+- Add dashboard widgets: gauges for temperature/humidity, toggles for fan/pump/LED, and logs.
+- Confirm that telemetry updates and cloud toggles control hardware correctly.
+
+---
+
+## 8. Field testing & tuning
+- Run the system in the target environment for extended periods.
+- Tune temperature thresholds for the age and needs of chicks.
+- Monitor cycle frequency and system stability, and inspect for overheating.
+
+---
+
+## 9. Safety & improvements
+- Add inline fuses and thermal cutoffs for power circuits.
+- Replace DHT11 with DHT22 or SHT3x for better accuracy if needed.
+- Consider adding data logging, a camera, or battery/solar backup as future enhancements.
+
+---
+
+## 10. Version control & documentation
+- Commit incremental changes with meaningful messages.
+- Keep `workflow.md` and `README.md` in the repo root and update them with any hardware or firmware changes.
